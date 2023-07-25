@@ -8,6 +8,7 @@ import {
   CardMedia,
   Collapse,
   IconButton,
+  Link,
   ListItem,
   ListItemAvatar,
   ListItemText,
@@ -37,7 +38,11 @@ export default function ProductCard({ item }: Props) {
           }}
         />
         <CardMedia
-          sx={{ height: 140, backgroundSize: "contain", bgcolor: 'primary.light' }}
+          sx={{
+            height: 140,
+            backgroundSize: "contain",
+            bgcolor: "primary.light",
+          }}
           image={item.pictureUrl}
           title={item.name}
         />
@@ -51,7 +56,9 @@ export default function ProductCard({ item }: Props) {
         </CardContent>
         <CardActions>
           <Button size="small">Add to cart</Button>
-          <Button size="small">View</Button>
+          <Button component={Link} href={`/catalog/${item.id}`}>
+            View
+          </Button>
         </CardActions>
       </Card>
     </>

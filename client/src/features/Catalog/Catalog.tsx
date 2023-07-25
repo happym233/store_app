@@ -10,7 +10,7 @@ import { Product } from "../../app/models/product";
 import ProductList from "./ProductList";
 import { useEffect, useState } from "react";
 
-export default function Catelog() {
+export default function Catalog() {
   const [products, setProducts] = useState<Product[]>([]);
 
   function addProduct() {
