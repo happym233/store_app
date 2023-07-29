@@ -1,10 +1,12 @@
-import { createBrowserRouter } from "react-router-dom";
+import { Navigate, createBrowserRouter } from "react-router-dom";
 import App from "../app/layout/App";
 import HomePage from "../features/home/HomePage";
 import ProductDetails from "../features/Catalog/ProductDetails";
 import Catalog from "../features/Catalog/Catalog";
 import AboutPage from "../features/about/AboutPage";
 import ContactPage from "../features/contact/ContactPage";
+import ServerError from "../app/errors/ServerError";
+import NotFound from "../app/errors/NotFound";
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +18,9 @@ export const router = createBrowserRouter([
       { path: "catalog/:id", element: <ProductDetails /> },
       { path: "about", element: <AboutPage /> },
       { path: "contact", element: <ContactPage /> },
+      { path: "server-error", element: <ServerError /> },
+      { path: "not-found", element: <NotFound /> },
+      { path: "*", element: <Navigate replace to="/not-found" /> },
     ],
   },
 ]);
