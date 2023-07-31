@@ -4,6 +4,7 @@ import {
   Badge,
   Box,
   IconButton,
+  Link,
   List,
   ListItem,
   Switch,
@@ -13,6 +14,7 @@ import {
 import path from "path";
 import { title } from "process";
 import { NavLink } from "react-router-dom";
+import { useStoreContext } from "../context/storeContext";
 
 const midLinks = [
   { title: "catalog", path: "/catalog" },
@@ -42,6 +44,9 @@ interface Props {
 }
 
 export default function Header({ darkMode, setDarkMode }: Props) {
+  const { basket } = useStoreContext();
+  const itemCount = basket?.items.reduce((sum, item) => sum + item.quantity, 0);
+
   function changeMode() {
     setDarkMode(!darkMode);
   }
@@ -74,8 +79,15 @@ export default function Header({ darkMode, setDarkMode }: Props) {
           ))}
         </List>
         <Box display="flex" alignItems="center">
-          <IconButton size="large" edge="start" color="inherit" sx={{ mr: 2 }}>
-            <Badge badgeContent="4" color="secondary">
+          <IconButton
+            size="large"
+            component={Link}
+            href="/basket"
+            edge="start"
+            color="inherit"
+            sx={{ mr: 2 }}
+          >
+            <Badge badgeContent={itemCount} color="secondary">
               <ShoppingCart />
             </Badge>
           </IconButton>

@@ -17,12 +17,28 @@ import {
 import { Product } from "../../app/models/product";
 import { ExpandMore } from "@mui/icons-material";
 import { red } from "@mui/material/colors";
+import { useState } from "react";
+import agent from "../../app/api/agent";
+import { error } from "console";
+import { LoadingButton } from "@mui/lab";
+import { useStoreContext } from "../../app/context/storeContext";
 
 interface Props {
   item: Product;
 }
 
 export default function ProductCard({ item }: Props) {
+  const [loading, setLoading] = useState(false);
+  const { setBasket } = useStoreContext();
+
+  function handleAddItem(productId: number) {
+    setLoading(true);
+    agent.Basket.addItem(productId)
+      .then(basket => setBasket(basket))
+      .catch((error) => console.log(error))
+      .finally(() => setLoading(false));
+  }
+
   return (
     <>
       <Card sx={{ maxWidth: 345 }}>
@@ -55,7 +71,13 @@ export default function ProductCard({ item }: Props) {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small">Add to cart</Button>
+          <LoadingButton
+            loading={loading}
+            onClick={() => handleAddItem(item.id)}
+            size="small"
+          >
+            Add to cart
+          </LoadingButton>
           <Button component={Link} href={`/catalog/${item.id}`}>
             View
           </Button>
