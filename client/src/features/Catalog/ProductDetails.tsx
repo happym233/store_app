@@ -12,63 +12,70 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import { Product } from "../../app/models/product";
 import { error } from "console";
 import agent from "../../app/api/agent";
 import LoadingComponent from "../../app/layout/LoadingComponent";
-import { useStoreContext } from "../../app/context/storeContext";
 import { LoadingButton } from "@mui/lab";
+import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
+import {
+  addBasketItemAsync,
+  removeBasketItemAsync,
+} from "../Basket/BasketSlice";
+import { fetchProductAsync, productSelectors } from "./catalogSlice";
 
 export default function ProductDetails() {
-  const { basket, setBasket } = useStoreContext();
+  const { basket, status } = useAppSelector((state) => state.basket);
+  const dispatch = useAppDispatch();
   const { id } = useParams<{ id: string }>();
-  const [product, setProduct] = useState<Product>();
-  const [loading, setLoading] = useState(true);
+  const product = useAppSelector((state) =>
+    productSelectors.selectById(state, id!)
+  );
   const [quantity, setQuantity] = useState(0);
-  const [submitting, setSubmitting] = useState(false);
+  const { status: productStatus } = useAppSelector((state) => state.catalog);
   const item = basket?.items.find((i) => i.productId === product?.id);
 
   function handleInputChange(event: any) {
     if (event.target.value < 0) return;
     setQuantity(event.target.value);
-    if (item) item.quantity = quantity;
   }
 
   function handleUpdateCart() {
-    setSubmitting(true);
     if (!item || quantity > item.quantity) {
       const udpatedQuantity = item ? quantity - item.quantity : quantity;
-      agent.Basket.addItem(product?.id!, udpatedQuantity)
-        .then((basket) => setBasket(basket))
-        .catch((err) => console.log(err))
-        .finally(() => setSubmitting(false));
+      dispatch(
+        addBasketItemAsync({
+          productId: product?.id!,
+          quantity: udpatedQuantity,
+        })
+      );
     } else if (quantity < item.quantity) {
       const udpatedQuantity = item ? item.quantity - quantity : quantity;
-      agent.Basket.removeItem(product?.id!, udpatedQuantity)
-        .then((basket) => setBasket(basket))
-        .catch((err) => console.log(err))
-        .finally(() => setSubmitting(false));
+      dispatch(
+        removeBasketItemAsync({
+          productId: product?.id!,
+          quantity: udpatedQuantity,
+        })
+      );
     }
   }
 
   useEffect(() => {
     if (item) setQuantity(item.quantity);
-    id &&
-      agent.Catalog.details(parseInt(id))
-        .then((response) => setProduct(response))
-        .catch((error) => console.log(error))
-        .finally(() => setLoading(false));
-  }, [id, item]);
+    console.log(product);
+    if (!product) id && dispatch(fetchProductAsync(parseInt(id!)));
+  }, [id, item, dispatch, product]);
 
-  if (loading) return <LoadingComponent message="Loading product..." />;
+  if (productStatus.includes("pending"))
+    return <LoadingComponent message="Loading product..." />;
 
   if (!product)
     return (
       <>
         <h3> Product not found</h3>
         <Divider />
-        <Button fullWidth component={Link} href="/catalog">
+        <Button fullWidth component={NavLink} to="/catalog">
           Go back to shop
         </Button>
       </>
@@ -132,8 +139,13 @@ export default function ProductDetails() {
               color="primary"
               size="large"
               variant="contained"
-              disabled={quantity === item?.quantity || (!item && quantity == 0)}
-              loading={submitting}
+              disabled={
+                quantity === item?.quantity || (!item && quantity === 0)
+              }
+              loading={
+                status.includes("pendingAddItem" + product.id) ||
+                status.includes("pendingRemoveItem" + product.id)
+              }
               onClick={handleUpdateCart}
               fullWidth
             >

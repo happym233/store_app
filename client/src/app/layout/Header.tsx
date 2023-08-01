@@ -14,7 +14,7 @@ import {
 import path from "path";
 import { title } from "process";
 import { NavLink } from "react-router-dom";
-import { useStoreContext } from "../context/storeContext";
+import { useAppSelector } from "../store/configureStore";
 
 const midLinks = [
   { title: "catalog", path: "/catalog" },
@@ -44,7 +44,7 @@ interface Props {
 }
 
 export default function Header({ darkMode, setDarkMode }: Props) {
-  const { basket } = useStoreContext();
+  const { basket } = useAppSelector((state) => state.basket);
   const itemCount = basket?.items.reduce((sum, item) => sum + item.quantity, 0);
 
   function changeMode() {
@@ -81,8 +81,8 @@ export default function Header({ darkMode, setDarkMode }: Props) {
         <Box display="flex" alignItems="center">
           <IconButton
             size="large"
-            component={Link}
-            href="/basket"
+            component={NavLink}
+            to="/basket"
             edge="start"
             color="inherit"
             sx={{ mr: 2 }}

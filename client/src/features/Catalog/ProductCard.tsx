@@ -21,23 +21,17 @@ import { useState } from "react";
 import agent from "../../app/api/agent";
 import { error } from "console";
 import { LoadingButton } from "@mui/lab";
-import { useStoreContext } from "../../app/context/storeContext";
+import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
+import { addBasketItemAsync, setBasket } from "../Basket/BasketSlice";
+import { NavLink } from "react-router-dom";
 
 interface Props {
   item: Product;
 }
 
 export default function ProductCard({ item }: Props) {
-  const [loading, setLoading] = useState(false);
-  const { setBasket } = useStoreContext();
-
-  function handleAddItem(productId: number) {
-    setLoading(true);
-    agent.Basket.addItem(productId)
-      .then(basket => setBasket(basket))
-      .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
-  }
+  const { status } = useAppSelector((state) => state.basket);
+  const dispatch = useAppDispatch();
 
   return (
     <>
@@ -72,13 +66,15 @@ export default function ProductCard({ item }: Props) {
         </CardContent>
         <CardActions>
           <LoadingButton
-            loading={loading}
-            onClick={() => handleAddItem(item.id)}
+            loading={status.includes("pendingAddingItem" + item.id)}
+            onClick={() =>
+              dispatch(addBasketItemAsync({ productId: item.id, quantity: 1 }))
+            }
             size="small"
           >
             Add to cart
           </LoadingButton>
-          <Button component={Link} href={`/catalog/${item.id}`}>
+          <Button component={NavLink} to={`/catalog/${item.id}`}>
             View
           </Button>
         </CardActions>

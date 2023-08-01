@@ -10,15 +10,20 @@ import "@fontsource/roboto/700.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router/Routes";
 import { StoreProvider } from "./app/context/storeContext";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import { store } from "./app/store/configureStore";
+import { fetchProductAsync } from "./features/Catalog/catalogSlice";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
 root.render(
   <React.StrictMode>
-    <StoreProvider>
+    <Provider store={store}>
       <RouterProvider router={router} />
-    </StoreProvider>
+    </Provider>
   </React.StrictMode>
 );
 

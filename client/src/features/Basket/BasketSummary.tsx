@@ -7,12 +7,12 @@ import {
   TableCell,
   Typography,
 } from "@mui/material";
-import { useStoreContext } from "../../app/context/storeContext";
 import { useEffect, useState } from "react";
 import { dollarFormat } from "../../app/util/util";
+import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
 
 export default function BasketSummary() {
-  const { basket } = useStoreContext();
+  const { basket } = useAppSelector((state) => state.basket);
   const subtotal = basket
     ? basket.items.reduce((sum, y) => sum + y.price * y.quantity, 0)
     : 0;

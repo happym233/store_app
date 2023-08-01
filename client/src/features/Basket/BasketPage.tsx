@@ -21,31 +21,26 @@ import {
   Typography,
 } from "@mui/material";
 import { Add, Delete, Remove } from "@mui/icons-material";
-import { useStoreContext } from "../../app/context/storeContext";
 import { LoadingButton } from "@mui/lab";
 import BasketSummary from "./BasketSummary";
+import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
+import { addBasketItemAsync, removeBasketItemAsync } from "./BasketSlice";
+import { NavLink } from "react-router-dom";
 
 export default function BasketPage() {
-  const { basket, setBasket, removeItem } = useStoreContext();
-  const [status, setStatus] = useState({
-    loading: false,
-    name: "",
-  });
+  const { basket, status } = useAppSelector((state) => state.basket);
+  const [isRemoveAll, setIsRemoveAll] = useState(false);
+  const dispatch = useAppDispatch();
 
-  function handleAddItem(productId: number, name: string) {
-    setStatus({ loading: true, name });
-    agent.Basket.addItem(productId)
-      .then((basket) => setBasket(basket))
-      .catch((error) => console.log(error))
-      .finally(() => setStatus({ loading: false, name }));
+  function handleAddItem(productId: number) {
+    dispatch(addBasketItemAsync({ productId, quantity: 1 }));
   }
 
-  function handleRemoveItem(productId: number, quantity = 1, name: string) {
-    setStatus({ loading: true, name });
-    agent.Basket.removeItem(productId, quantity)
-      .then(() => removeItem(productId, quantity))
-      .catch((error) => console.log(error))
-      .finally(() => setStatus({ loading: false, name }));
+  function handleRemoveItem(productId: number, quantity = 1) {
+    if (quantity > 1) setIsRemoveAll(true);
+    dispatch(removeBasketItemAsync({ productId, quantity })).finally(() =>
+      setIsRemoveAll(false)
+    );
   }
 
   if (!basket)
@@ -101,27 +96,18 @@ export default function BasketPage() {
                 <TableCell align="right">
                   <LoadingButton
                     loading={
-                      status.loading && status.name === "rem" + item.productId
+                      status === "pendingRemoveItem" + item.productId &&
+                      !isRemoveAll
                     }
-                    onClick={() =>
-                      handleRemoveItem(
-                        item.productId,
-                        1,
-                        "rem" + item.productId
-                      )
-                    }
+                    onClick={() => handleRemoveItem(item.productId, 1)}
                     color="error"
                   >
                     <Remove />
                   </LoadingButton>
                   {item.quantity}
                   <LoadingButton
-                    loading={
-                      status.loading && status.name === "add" + item.productId
-                    }
-                    onClick={() =>
-                      handleAddItem(item.productId, "add" + item.productId)
-                    }
+                    loading={status === "pendingAddingItem" + item.productId}
+                    onClick={() => handleAddItem(item.productId)}
                     color="error"
                   >
                     <Add />
@@ -133,14 +119,11 @@ export default function BasketPage() {
                 <TableCell align="right">
                   <LoadingButton
                     loading={
-                      status.loading && status.name === "rmall" + item.productId
+                      status === "pendingRemoveItem" + item.productId &&
+                      isRemoveAll
                     }
                     onClick={() =>
-                      handleRemoveItem(
-                        item.productId,
-                        item.quantity,
-                        "rmall" + item.productId
-                      )
+                      handleRemoveItem(item.productId, item.quantity)
                     }
                     color="error"
                   >
@@ -157,8 +140,8 @@ export default function BasketPage() {
         <Grid item xs={6}>
           <BasketSummary />
           <Button
-            component={Link}
-            href="/checkout"
+            component={NavLink}
+            to="/checkout"
             variant="contained"
             size="large"
             fullWidth
