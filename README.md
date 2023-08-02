@@ -6,7 +6,7 @@ tech stack: .Net 6 + React.js(typescript)
 ![main page](images/mainPage.png)
 
 ## Project Structure
-
+```
 .
 └── store_app
     ├── API
@@ -37,6 +37,7 @@ tech stack: .Net 6 + React.js(typescript)
     ├── images
     │   └── mainPage.png
     └── store_app.sln
+```
 
 
 ## Setup
