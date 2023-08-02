@@ -1,6 +1,43 @@
 # Store App
-------
+learn from [https://www.udemy.com/course/learn-to-build-an-e-commerce-store-with-dotnet-react-redux/](https://www.udemy.com/course/learn-to-build-an-e-commerce-store-with-dotnet-react-redux/)
+
 tech stack: .Net 6 + React.js(typescript)
+
+![main page](images/mainPage.png)
+
+## Project Structure
+
+.
+└── store_app
+    ├── API
+    │   ├── API.csproj
+    │   ├── Controllers
+    │   ├── DTOs
+    │   ├── Data
+    │   ├── Entities
+    │   ├── Extensions
+    │   ├── Middleware
+    │   ├── Program.cs
+    │   ├── Properties
+    │   ├── RequestHelpers
+    │   ├── appsettings.Development.json
+    │   ├── appsettings.json
+    │   ├── bin
+    │   ├── obj
+    │   └── store.db
+    ├── README.md
+    ├── client
+    │   ├── README.md
+    │   ├── node_modules
+    │   ├── package-lock.json
+    │   ├── package.json
+    │   ├── public
+    │   ├── src
+    │   └── tsconfig.json
+    ├── images
+    │   └── mainPage.png
+    └── store_app.sln
+
 
 ## Setup
 
