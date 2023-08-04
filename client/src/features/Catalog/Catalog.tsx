@@ -1,28 +1,19 @@
 import {
-  Avatar,
   Box,
-  Button,
   Checkbox,
   FormControl,
   FormControlLabel,
   FormGroup,
   FormLabel,
   Grid,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
   Pagination,
   Paper,
   Radio,
   RadioGroup,
-  TextField,
   Typography,
 } from "@mui/material";
-import { Product } from "../../app/models/product";
 import ProductList from "./ProductList";
-import { useEffect, useState } from "react";
-import agent from "../../app/api/agent";
+import { useEffect } from "react";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import NotFound from "../../app/errors/NotFound";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
@@ -31,7 +22,14 @@ import {
   fetchProductAsync,
   fetchProductsAsync,
   productSelectors,
+  setPageNumber,
+  setProductParams,
 } from "./catalogSlice";
+import ProductSearch from "./ProductSearch";
+import RadioButtonGroup from "../../app/components/RadioButtonGroup";
+import CheckboxButtons from "../../app/components/checkBoxButtons";
+import { type } from "os";
+import AppPagination from "../../app/components/AppPagination";
 
 const sortOptions = [
   { value: "name", label: "Alphabetical" },
@@ -41,8 +39,15 @@ const sortOptions = [
 
 export default function Catalog() {
   const products = useAppSelector(productSelectors.selectAll);
-  const { productsLoaded, status, filtersLoaded, brands, types } =
-    useAppSelector((state) => state.catalog);
+  const {
+    productsLoaded,
+    status,
+    filtersLoaded,
+    brands,
+    types,
+    productParams,
+    metaData,
+  } = useAppSelector((state) => state.catalog);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -53,55 +58,45 @@ export default function Catalog() {
     if (!filtersLoaded) dispatch(fetchFiltersAsync());
   }, [filtersLoaded, dispatch]);
 
-  if (status === "pendingFetchProducts") return <LoadingComponent />;
+  if (!filtersLoaded) return <LoadingComponent />;
 
-  if (!products) return <NotFound />;
+  if (!products || !metaData) return <NotFound />;
 
   return (
     <Grid container spacing={4}>
       <Grid item xs={3}>
         <Paper sx={{ mb: 2 }}>
-          <TextField label="Search products" variant="outlined" fullWidth />
+          <ProductSearch />
         </Paper>
 
         <Paper sx={{ mb: 2, p: 2 }}>
-          <FormControl>
-            <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
-            <RadioGroup>
-              {sortOptions.map(({ value, label }) => (
-                <FormControlLabel
-                  value={value}
-                  control={<Radio />}
-                  label={label}
-                  key={value}
-                />
-              ))}
-            </RadioGroup>
-          </FormControl>
+          <RadioButtonGroup
+            selectedValue={productParams.orderBy}
+            options={sortOptions}
+            onChange={(e) =>
+              dispatch(setProductParams({ orderBy: e.target.value }))
+            }
+          />
         </Paper>
 
         <Paper sx={{ mb: 2, p: 2 }}>
-          <FormGroup>
-            {brands.map((brand) => (
-              <FormControlLabel
-                control={<Checkbox />}
-                label={brand}
-                key={brand}
-              />
-            ))}
-          </FormGroup>
+          <CheckboxButtons
+            items={brands}
+            checked={productParams.brands!}
+            onChange={(items: string[]) =>
+              dispatch(setProductParams({ brands: items }))
+            }
+          />
         </Paper>
 
         <Paper sx={{ mb: 2, p: 2 }}>
-          <FormGroup>
-            {types.map((type) => (
-              <FormControlLabel
-                control={<Checkbox />}
-                label={type}
-                key={type}
-              />
-            ))}
-          </FormGroup>
+          <CheckboxButtons
+            items={types}
+            checked={productParams.types!}
+            onChange={(items: string[]) =>
+              dispatch(setProductParams({ types: items }))
+            }
+          />
         </Paper>
       </Grid>
 
@@ -114,17 +109,15 @@ export default function Catalog() {
           alignItems="center"
           sx={{ mt: 2 }}
         >
-          <Grid item xs={5}>
-            <Typography>Displaying 1-6 of 20 items</Typography>
-          </Grid>
-          <Grid item xs={9}>
-            <Pagination
-              count={10}
-              variant="outlined"
-              color="secondary"
-              size="large"
-              page={2}
-            />
+          <Grid item xs={14}>
+            {metaData && (
+              <AppPagination
+                metaData={metaData!}
+                onPageChange={(page: number) =>
+                  dispatch(setPageNumber({ pageNumber: page }))
+                }
+              />
+            )}
           </Grid>
         </Box>
       </Grid>

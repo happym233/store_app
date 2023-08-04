@@ -1,8 +1,4 @@
-import { useEffect, useState } from "react";
-import { Basket } from "../../app/models/basket";
-import agent from "../../app/api/agent";
-import { error } from "console";
-import LoadingComponent from "../../app/layout/LoadingComponent";
+import { useState } from "react";
 import {
   Box,
   Button,

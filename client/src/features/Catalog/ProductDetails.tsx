@@ -2,7 +2,6 @@ import {
   Button,
   Divider,
   Grid,
-  Link,
   Table,
   TableBody,
   TableCell,
@@ -13,9 +12,6 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
-import { Product } from "../../app/models/product";
-import { error } from "console";
-import agent from "../../app/api/agent";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { LoadingButton } from "@mui/lab";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";

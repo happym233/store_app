@@ -5,11 +5,9 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
 import { dollarFormat } from "../../app/util/util";
-import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
+import { useAppSelector } from "../../app/store/configureStore";
 
 export default function BasketSummary() {
   const { basket } = useAppSelector((state) => state.basket);

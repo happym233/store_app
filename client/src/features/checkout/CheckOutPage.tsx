@@ -1,4 +1,5 @@
 import { Button, Divider, Link, Typography } from "@mui/material";
+import { NavLink } from "react-router-dom";
 
 export default function CheckoutPage() {
   return (
@@ -7,7 +8,7 @@ export default function CheckoutPage() {
         Please login before checkout
       </Typography>
       <Divider />
-      <Button fullWidth component={Link} href="/catalog">
+      <Button fullWidth component={NavLink} to="/catalog">
         Go back to shop
       </Button>
     </>
