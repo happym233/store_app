@@ -22,22 +22,10 @@ import BasketSummary from "./BasketSummary";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
 import { addBasketItemAsync, removeBasketItemAsync } from "./BasketSlice";
 import { NavLink } from "react-router-dom";
+import BasketTable from "./BasketTable";
 
 export default function BasketPage() {
-  const { basket, status } = useAppSelector((state) => state.basket);
-  const [isRemoveAll, setIsRemoveAll] = useState(false);
-  const dispatch = useAppDispatch();
-
-  function handleAddItem(productId: number) {
-    dispatch(addBasketItemAsync({ productId, quantity: 1 }));
-  }
-
-  function handleRemoveItem(productId: number, quantity = 1) {
-    if (quantity > 1) setIsRemoveAll(true);
-    dispatch(removeBasketItemAsync({ productId, quantity })).finally(() =>
-      setIsRemoveAll(false)
-    );
-  }
+  const { basket } = useAppSelector((state) => state.basket);
 
   if (!basket)
     return (
@@ -54,83 +42,7 @@ export default function BasketPage() {
 
   return (
     <>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Product</TableCell>
-              <TableCell align="right">Price</TableCell>
-              <TableCell align="right">Quantity</TableCell>
-              <TableCell align="right">Subtotal</TableCell>
-              <TableCell align="right"></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {basket.items.map((item) => (
-              <TableRow
-                key={item.productId}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    component={Link}
-                    href={`/catalog/${item.productId}`}
-                  >
-                    <img
-                      src={item.pictureUrl}
-                      alt={item.name}
-                      style={{ height: 50, marginRight: 20 }}
-                    />
-                    <span>{item.name}</span>
-                  </Box>
-                </TableCell>
-                <TableCell align="right">
-                  ${(item.price / 100).toFixed(2)}
-                </TableCell>
-                <TableCell align="right">
-                  <LoadingButton
-                    loading={
-                      status === "pendingRemoveItem" + item.productId &&
-                      !isRemoveAll
-                    }
-                    onClick={() => handleRemoveItem(item.productId, 1)}
-                    color="error"
-                  >
-                    <Remove />
-                  </LoadingButton>
-                  {item.quantity}
-                  <LoadingButton
-                    loading={status === "pendingAddingItem" + item.productId}
-                    onClick={() => handleAddItem(item.productId)}
-                    color="error"
-                  >
-                    <Add />
-                  </LoadingButton>
-                </TableCell>
-                <TableCell align="right">
-                  ${((item.price * item.quantity) / 100).toFixed(2)}
-                </TableCell>
-                <TableCell align="right">
-                  <LoadingButton
-                    loading={
-                      status === "pendingRemoveItem" + item.productId &&
-                      isRemoveAll
-                    }
-                    onClick={() =>
-                      handleRemoveItem(item.productId, item.quantity)
-                    }
-                    color="error"
-                  >
-                    <Delete />
-                  </LoadingButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <BasketTable items={basket.items} isBasket={true} />
       <Grid container>
         <Grid item xs={6} />
         <Grid item xs={6}>

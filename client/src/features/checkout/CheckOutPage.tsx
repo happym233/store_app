@@ -1,16 +1,147 @@
-import { Button, Divider, Link, Typography } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Paper,
+  Step,
+  StepLabel,
+  Stepper,
+  Typography,
+} from "@mui/material";
+import { useState } from "react";
+import AddressForm from "./AddressForm";
+import PaymentForm from "./PaymentForm";
+import Review from "./Review";
+import {
+  FieldValues,
+  FormProvider,
+  useForm,
+  useFormContext,
+} from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { validationSchema } from "./CheckOutValidation";
+import { address } from "../../app/models/checkout";
+import agent from "../../app/api/agent";
+import { useAppDispatch } from "../../app/store/configureStore";
+import { clearBasket } from "../Basket/BasketSlice";
+import { LoadingButton } from "@mui/lab";
+
+const steps = ["Shipping address", "Payment details", "Review your order"];
 
 export default function CheckoutPage() {
+  const [activeStep, setActiveStep] = useState(0);
+  const [orderNumber, setOrderNumber] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useAppDispatch();
+
+  const curValidationSchema = validationSchema[activeStep];
+  const methods = useForm({
+    mode: "onTouched",
+    resolver: yupResolver(curValidationSchema),
+  });
+  const [address, setAddress] = useState<address | null>(null);
+
+  const handleNext = async (data: FieldValues) => {
+    const shippingAddress = address;
+    const { nameOnCard, saveAddress } = data;
+    if (steps[activeStep] === "Shipping address") {
+      setAddress({
+        fullName: data.fullName,
+        address1: data.address1,
+        address2: data.address2,
+        city: data.city,
+        state: data.state,
+        zip: data.zip,
+        country: data.country,
+      });
+    }
+    if (activeStep === steps.length - 1) {
+      setLoading(true);
+      try {
+        const orderNumber = await agent.Orders.create({
+          saveAddress,
+          shippingAddress,
+        });
+        setOrderNumber(orderNumber);
+        setActiveStep(activeStep + 1);
+        dispatch(clearBasket());
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setActiveStep(activeStep + 1);
+    }
+  };
+
+  const handleBack = () => {
+    setActiveStep(activeStep - 1);
+  };
+
+  function getStepContent(step: number) {
+    switch (step) {
+      case 0:
+        return <AddressForm />;
+      case 1:
+        return <PaymentForm />;
+      case 2:
+        return <Review address={address!} />;
+      default:
+        throw new Error("Unknown step");
+    }
+  }
+
   return (
-    <>
-      <Typography gutterBottom variant="h3">
-        Please login before checkout
-      </Typography>
-      <Divider />
-      <Button fullWidth component={NavLink} to="/catalog">
-        Go back to shop
-      </Button>
-    </>
+    <FormProvider {...methods}>
+      <Paper
+        variant="outlined"
+        sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
+      >
+        <Typography component="h1" variant="h4" align="center">
+          Checkout
+        </Typography>
+        <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <>
+          {activeStep === steps.length ? (
+            <>
+              <Typography variant="h5" gutterBottom>
+                Thank you for your order.
+              </Typography>
+              <Typography variant="subtitle1">
+                Your order number is #{orderNumber}. We have not emailed your
+                order confirmation, and will not send you an update when your
+                order has shipped as it is a fake store.
+              </Typography>
+            </>
+          ) : (
+            <form onSubmit={methods.handleSubmit(handleNext)}>
+              {getStepContent(activeStep)}
+              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                {activeStep !== 0 && (
+                  <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+                    Back
+                  </Button>
+                )}
+                <LoadingButton
+                  disabled={!methods.formState.isValid}
+                  loading={loading}
+                  variant="contained"
+                  type="submit"
+                  sx={{ mt: 3, ml: 1 }}
+                >
+                  {activeStep === steps.length - 1 ? "Place order" : "Next"}
+                </LoadingButton>
+              </Box>
+            </form>
+          )}
+        </>
+      </Paper>
+    </FormProvider>
   );
 }
