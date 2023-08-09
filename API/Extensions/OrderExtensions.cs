@@ -10,6 +10,23 @@ namespace API.Extensions
 {
     public static class OrderExtensions
     {
+        private static string ProjectOrderStatusToStr(OrderStatus orderStatus)
+        {
+            if (orderStatus == OrderStatus.Pending)
+            {
+                return "Pending";
+            }
+            else if (orderStatus == OrderStatus.PaymentReceived)
+            {
+                return "Payment Reveived";
+            }
+            else if (orderStatus == OrderStatus.PaymentFailed)
+            {
+                return "Payment Failed";
+            }
+            return null;
+        }
+
         public static IQueryable<OrderDto> ProjectOrderToOrderDto(this IQueryable<Order> query)
         {
             return query
@@ -21,7 +38,7 @@ namespace API.Extensions
                     ShippingAddress = order.ShippingAddress,
                     DeliveryFee = order.DeliveryFee,
                     Subtotal = order.Subtotal,
-                    OrderStatus = order.OrderStatus.ToString(),
+                    OrderStatus = ProjectOrderStatusToStr(order.OrderStatus),
                     Total = order.GetTotal(),
                     OrderItems = order.OrderItems.Select(item => new OrderItemDto
                     {

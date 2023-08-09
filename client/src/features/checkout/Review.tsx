@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { useAppSelector } from "../../app/store/configureStore";
 import BasketTable from "../Basket/BasketTable";
 import { dollarFormat } from "../../app/util/util";
-import { address } from "../../app/models/checkout";
+import { ShippingAddress } from "../../app/models/order";
 
 const products = [
   {
@@ -43,7 +43,7 @@ const payments = [
 ];
 
 interface Props {
-  address: address;
+  address: ShippingAddress;
 }
 
 export default function Review({ address }: Props) {
@@ -96,7 +96,7 @@ export default function Review({ address }: Props) {
           </Typography>
           <Typography gutterBottom>{address.zip}</Typography>
         </Grid>
-        <Grid item container direction="column" xs={12} sm={6}>
+        {/*<Grid item container direction="column" xs={12} sm={6}>
           <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
             Payment details
           </Typography>
@@ -112,7 +112,7 @@ export default function Review({ address }: Props) {
               </Fragment>
             ))}
           </Grid>
-        </Grid>
+            </Grid>*/}
       </Grid>
     </>
   );

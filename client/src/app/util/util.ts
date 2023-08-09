@@ -6,3 +6,9 @@ export function getCookie(key: string) {
 export function dollarFormat(v: number) { 
   return `\$ ${ (v / 100).toFixed(2) }`;
 }
+
+export function timeFormat(time: string) { 
+  const dateTimeSplit = time.split('T');
+  const hourMinSplit = dateTimeSplit[1].split(":");
+  return dateTimeSplit[0] + " " + hourMinSplit[0] + ":" + hourMinSplit[1];
+}
