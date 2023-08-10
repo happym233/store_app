@@ -32,7 +32,7 @@ namespace API.Controllers
         {
             var user = await _userManager.FindByNameAsync(loginDto.Username);
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
-                return Unauthorized();
+                return Unauthorized(new ProblemDetails { Title = "Login failed: wrong username or password" });
 
             var userBasket = await RetrieveBasket(loginDto.Username);
             var anonBasket = await RetrieveBasket(Request.Cookies["buyerId"]);

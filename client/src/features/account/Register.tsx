@@ -1,33 +1,17 @@
-import * as React from "react";
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import {
-  Alert,
-  AlertTitle,
-  List,
-  ListItem,
-  ListItemText,
-  Paper,
-} from "@mui/material";
-import { Navigate, NavLink, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Paper } from "@mui/material";
+import { NavLink, useNavigate } from "react-router-dom";
 import agent from "../../app/api/agent";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { LoadingButton } from "@mui/lab";
-import { useAppDispatch } from "../../app/store/configureStore";
-import { signInUser } from "./accountSlice";
-import { error } from "console";
 import { toast } from "react-toastify";
 
 export default function Register() {

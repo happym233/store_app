@@ -1,5 +1,4 @@
 import { Typography, List, ListItem, ListItemText, Grid } from "@mui/material";
-import { Fragment } from "react";
 import { useAppSelector } from "../../app/store/configureStore";
 import BasketTable from "../Basket/BasketTable";
 import { dollarFormat } from "../../app/util/util";

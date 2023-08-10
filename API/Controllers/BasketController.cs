@@ -78,7 +78,7 @@ namespace API.Controllers
             if (string.IsNullOrEmpty(buyerId))
             {
                 buyerId = Guid.NewGuid().ToString();
-                var cookieOptions = new CookieOptions { IsEssential = true, Expires = DateTime.Now.AddDays(15) };
+                var cookieOptions = new CookieOptions { IsEssential = true, Expires = DateTime.UtcNow.AddDays(15) };
                 Response.Cookies.Append("buyerId", buyerId, cookieOptions);
             }
             var basket = new Basket { BuyerId = buyerId };

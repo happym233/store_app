@@ -1,10 +1,4 @@
-import {
-  Typography,
-  Grid,
-  TextField,
-  FormControlLabel,
-  Checkbox,
-} from "@mui/material";
+import { Typography, Grid, TextField } from "@mui/material";
 import AppTextInput from "../../app/components/AppTextInput";
 import { useFormContext } from "react-hook-form";
 import {
@@ -14,7 +8,6 @@ import {
 } from "@stripe/react-stripe-js";
 import { StripeInput } from "./StripeInput";
 import { StripeElementType } from "@stripe/stripe-js";
-import { useState } from "react";
 
 interface Props {
   cardState: {

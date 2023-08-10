@@ -1,26 +1,14 @@
-import { useState } from "react";
 import {
-  Box,
   Button,
   Container,
   Divider,
   Grid,
-  IconButton,
   Link,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from "@mui/material";
-import { Add, Delete, Remove } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
 import BasketSummary from "./BasketSummary";
-import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
-import { addBasketItemAsync, removeBasketItemAsync } from "./BasketSlice";
+import { useAppSelector } from "../../app/store/configureStore";
 import { NavLink } from "react-router-dom";
 import BasketTable from "./BasketTable";
 

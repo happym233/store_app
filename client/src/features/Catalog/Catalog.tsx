@@ -1,17 +1,4 @@
-import {
-  Box,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  FormLabel,
-  Grid,
-  Pagination,
-  Paper,
-  Radio,
-  RadioGroup,
-  Typography,
-} from "@mui/material";
+import { Box, Grid, Paper } from "@mui/material";
 import ProductList from "./ProductList";
 import { useEffect } from "react";
 import LoadingComponent from "../../app/layout/LoadingComponent";
@@ -19,7 +6,6 @@ import NotFound from "../../app/errors/NotFound";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
 import {
   fetchFiltersAsync,
-  fetchProductAsync,
   fetchProductsAsync,
   productSelectors,
   setPageNumber,
@@ -28,8 +14,8 @@ import {
 import ProductSearch from "./ProductSearch";
 import RadioButtonGroup from "../../app/components/RadioButtonGroup";
 import CheckboxButtons from "../../app/components/checkBoxButtons";
-import { type } from "os";
 import AppPagination from "../../app/components/AppPagination";
+import useProducts from "../../app/hooks/useProducts";
 
 const sortOptions = [
   { value: "name", label: "Alphabetical" },
@@ -38,27 +24,13 @@ const sortOptions = [
 ];
 
 export default function Catalog() {
-  const products = useAppSelector(productSelectors.selectAll);
-  const {
-    productsLoaded,
-    status,
-    filtersLoaded,
-    brands,
-    types,
-    productParams,
-    metaData,
-  } = useAppSelector((state) => state.catalog);
+  const { products, brands, types, filtersLoaded, productsLoaded, metaData } =
+    useProducts();
+  const { productParams } = useAppSelector((state) => state.catalog);
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    if (!productsLoaded) dispatch(fetchProductsAsync());
-  }, [productsLoaded, dispatch]);
-
-  useEffect(() => {
-    if (!filtersLoaded) dispatch(fetchFiltersAsync());
-  }, [filtersLoaded, dispatch]);
-
-  if (!filtersLoaded) return <LoadingComponent />;
+  if (!filtersLoaded || !productsLoaded)
+    return <LoadingComponent message="Loading products" />;
 
   if (!products || !metaData) return <NotFound />;
 

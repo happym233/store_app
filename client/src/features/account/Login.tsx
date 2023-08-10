@@ -1,29 +1,40 @@
-import * as React from "react";
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Paper } from "@mui/material";
-import { Navigate, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import agent from "../../app/api/agent";
+import {
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  Paper,
+} from "@mui/material";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { FieldValues, useForm } from "react-hook-form";
 import { LoadingButton } from "@mui/lab";
 import { useAppDispatch } from "../../app/store/configureStore";
 import { signInUser } from "./accountSlice";
+import { useState } from "react";
+import { VisibilityOff, Visibility } from "@mui/icons-material";
 
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
   const {
     register,
     handleSubmit,
@@ -83,17 +94,43 @@ export default function Login() {
             error={!!errors.username}
             helperText={errors?.usename?.message as string}
           />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="Password"
-            type="password"
-            autoComplete="current-password"
-            {...register("password", { required: "Password is required." })}
-            error={!!errors.password}
-            helperText={errors?.password?.message as string}
+          {/*
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              label="Password"
+              type="password"
+              autoComplete="current-password"
+              {...register("password", { required: "Password is required." })}
+              error={!!errors.password}
+              helperText={errors?.password?.message as string}
           />
+          */}
+          <FormControl fullWidth variant="outlined" error={!!errors.password}>
+            <InputLabel htmlFor="outlined-adornment-password">
+              Password*
+            </InputLabel>
+            <OutlinedInput
+              id="outlined-adornment-password"
+              type={showPassword ? "text" : "password"}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Password"
+              autoComplete="current-password"
+              {...register("password", { required: "Password is required." })}
+            />
+          </FormControl>
           <LoadingButton
             loading={isSubmitting}
             type="submit"

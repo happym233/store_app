@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import { Order } from "../../app/models/order";
-import { Height } from "@mui/icons-material";
 import { dollarFormat } from "../../app/util/util";
 import BasketTable from "../Basket/BasketTable";
 import { BasketItem } from "../../app/models/basket";

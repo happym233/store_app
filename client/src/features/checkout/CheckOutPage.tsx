@@ -11,12 +11,7 @@ import { useEffect, useState } from "react";
 import AddressForm from "./AddressForm";
 import PaymentForm from "./PaymentForm";
 import Review from "./Review";
-import {
-  FieldValues,
-  FormProvider,
-  useForm,
-  useFormContext,
-} from "react-hook-form";
+import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { validationSchema } from "./CheckOutValidation";
 import { ShippingAddress } from "../../app/models/order";
@@ -30,7 +25,6 @@ import {
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
-import { router } from "../../router/Routes";
 
 const steps = ["Shipping address", "Review your order", "Payment details"];
 

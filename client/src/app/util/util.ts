@@ -4,7 +4,7 @@ export function getCookie(key: string) {
 }
 
 export function dollarFormat(v: number) { 
-  return `\$ ${ (v / 100).toFixed(2) }`;
+  return `$ ${ (v / 100).toFixed(2) }`;
 }
 
 export function timeFormat(time: string) { 
